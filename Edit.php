@@ -38,23 +38,22 @@
 	<?php 
 	include 'base.php';
 	
-	print isset($_POST['Worker'])? $workers: $users;
-	
 	$handle=isset($_POST['Worker']) ? fopen($workers,'r') : fopen($users,'r');
-	
+
 	$counter=0;
 	while(!feof($handle)) {
 		$line=fgets($handle);
 		if($line!=null && $counter==$_POST['ID'])
 		{
-			$worker=unserialize($line);
+			$user=unserialize($line);
+			
 			echo "<form method=\"post\" action=\"Update.php\" enctype=\"multipart/form-data\">
-				<label for=\"name\" class=\"label\">Name</label> ".$worker->firstName."<br>
+				<label for=\"name\" class=\"label\">Name</label> ".$user->firstName."<br>
 
-				<label for=\"familyName\" class=\"label\">Family Name</label>".$worker->familyName."<br>
+				<label for=\"familyName\" class=\"label\">Family Name</label>".$user->familyName."<br>
 
 				<label for=\"age\" class=\"label\">Age</label>
-				<input type=\"number\" min=\"0\" max=\"100\" name=\"age\" class=\"age\" value =\"".$worker->age ."\" /><br>
+				<input type=\"number\" min=\"0\" max=\"100\" name=\"age\" class=\"age\" value =\"".$user->age ."\" /><br>
 
 				<label for=\"passwordOld\" class=\"label\">Old Password</label>
 				<input type=\"password\" id=\"passwordOld\" name=\"passwordOld\" /><br>
@@ -62,31 +61,72 @@
 				<label for=\"passwordNew\" class=\"label\">New Password</label>
 				<input type=\"password\" id=\"passwordNew\" name=\"passwordNew\" /><br>
 
-				<label for=\"securityQ\" class=\"label\">Secret Question</label>". $worker->securityQ."<br>
+				<label for=\"securityQ\" class=\"label\">Secret Question</label>". $user->securityQ."<br>
 				<label for=\"securityAOld\" class=\"label\">Old Secret Answer</label>
 				<input type=\"text\" name=\"securityAOld\" id=\"securityAOld\" autocomplete=\"off\" /><br>
 
 				<label for=\"securityA\" class=\"label\">New Secret Answer</label>
-				<input type=\"text\" name=\"securityA\" id=\"securitytA\" autocomplete=\"off\"/>
-				<label for=\"cars\" class=\"label\">Cars</label>
-				<input type=\"text\" name=\"cars\" class=\"cars\"/><br> 
-				<br> ";
+				<input type=\"text\" name=\"securityA\" id=\"securitytA\" autocomplete=\"off\"/> <br>
+				
+								
+				<label for=\"model\" class=\"label\">Model</label>
+				<input type=\"text\" name=\"model\" class=\"model\" /><br>
+				
+				<label for=\"trademark\" class=\"label\">Trademark</label>
+				<input type=\"text\" name=\"trademark\" class=\"trademark\" /><br>
 
+				<label for=\"engine\" class=\"label\">Engine Size</label>
+				<input type=\"text\" name=\"engineSize\" class=\"engineSize\" /><br>
+				
+				<label for=\"production Year\" class=\"label\">Production Year</label>
+				<input type=\"number\" min=\"1900\" max=\"2030\" name=\"productionYear\" class=\"productionYear\" /><br>	
+				";
+
+if(isset($_POST['Remove_Car']))
+{
+	if(isset($_POST['Car_ID'])){
+	$arr=unserialize(base64_decode($user->cars));
+	
+	unset($arr[$_POST['Car_ID']]);
+	$user->cars=base64_encode(serialize($arr));
+	}
+}
+if(isset($_POST['Add_Car']))
+{
+	
+	$car=new Car($_POST['model'],$_POST['productionYear'],$_POST['trademark'],$_POST['engineSize']);
+	if($user->cars==null)$user->cars=base64_encode(serialize(array($car)));
+	else 
+	{	$arr=unserialize(base64_decode($user->cars));
+			array_push($arr,$car);
+	$user->cars=base64_encode(serialize($arr));
+	}
+	
+}
 if(isset($_POST['Worker'])) print"
 				<label for=\"paymentPerHour\" class=\"label\">Payment Per Hour</label>
-				<input type=\"text\" name=\"paymentPerHour\" id=\"paymentPerHour\" autocomplete=\"off\" value=\"".$worker->paymentPerHour."\"/><br>
+				<input type=\"text\" name=\"paymentPerHour\" id=\"paymentPerHour\" autocomplete=\"off\" value=\"".$user->paymentPerHour."\"/><br>
 				
 				<input type=\"hidden\" name=\"Worker\" id=\"Worker\" value=\"".$_POST['Worker']."\"/>
 				
 				<label for=\"paymentPerHour\" class=\"label\">Profession</label>
-				<input type=\"text\" name=\"profession\" id=\"professsion\" autocomplete=\"off\" value=\"".$worker->profession."\"/><br>";
-				
+				<input type=\"text\" name=\"profession\" id=\"professsion\" autocomplete=\"off\" value=\"".$user->profession."\"/><br>";
+
+if($user->cars!=null){
+	foreach(unserialize(base64_decode($user->cars)) as $key=>$value)
+	{var_dump($value); print "<input type=\"radio\" name=\"Car ID\" value=\"".$key."\"/>";}
+	print "<br><br><br><input type=\"submit\" class=\"button\" name=\"Remove Car\" id=\"Remove Car\" value=\"Remove Car\" formaction=\"Edit.php\" />";
+}					
+		
 				print " <div class=\"btn-group\">
+				<input type=\"submit\" class=\"button\" name=\"Add Car\" id=\"Add Car\" value=\"Add Car\" formaction=\"Edit.php\" />
 				<input type=\"file\" id=\"Profile Picture\" name=\"Profile Picture\" />
 				<input type=\"hidden\" name=\"ID\" value=\"" .$counter. "\">
 				<input type=\"submit\" class=\"button\" name=\"Update\" id=\"Update\" value=\"Update\"/ >
 				</div>
 				</form>";
+
+				print "<br>";
 		}
 		$counter++;
 	}

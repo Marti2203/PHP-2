@@ -40,6 +40,10 @@
 	
 	$errors=array();
 
+if(isset($_POST['Worker']) )
+print "1";
+else print "2";
+
 	if(!uploadValid($_FILES["Profile_Picture"]))
 	array_push($errors,'Sorry, there was an error uploading your file. The worker is not created');
 	if(!emailValid($_POST['email']))
@@ -86,9 +90,8 @@
 		}
 		fclose($handle);
 	}
-	else for($x = 0; $x < count($errors); $x++) echo $errors[$x]."<br>";  
-	print "done";
+	else for($x = 0; $x < count($errors); $x++) echo $errors[$x]."<br>"; 
 	?>
-</body>
+</body> 
 
 </html>

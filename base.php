@@ -4,6 +4,12 @@ class Car{
 	public $productionYear;
 	public $trademark;
 	public $engineSize;
+	function __construct($model,$productionYear,$trademark,$engineSize){
+	$this->model=$model;
+	$this->productionYear=$productionYear;
+	$this->trademark=$trademark;
+	$this->engineSize=$engineSize;
+	}
 }
 class User{
 	public $firstName;

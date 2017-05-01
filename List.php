@@ -49,7 +49,10 @@
 			if($worker==null)continue;
 			foreach(get_object_vars($worker) as $key => $value)
 			if($key!='isAdmin')
-				echo $key."=>".$value."\t";
+			if($key==='cars')
+			echo $key."=>".base64_decode($value)."\t";
+			else echo $key."=>".$value."\t";
+			
 			echo "<img src=\"".$pictures.$worker->profilePicture."\"alt=Error>
 				<form method=\"post\" action=\"Edit.php\">
 				<input type=\"hidden\" name=\"ID\" value=\"" .$counter. "\"> ";

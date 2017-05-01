@@ -40,11 +40,11 @@
 <form method="post" action="Register.php" enctype="multipart/form-data">
 
 <label for="firstName" class="label">First Name</label>
-				<input type="text" name="firstName" class="firstName"/><br>
+				<input type="text" name="firstName" class="firstName" value="<?php if(isset($_POST['firstName'])) print $_POST['firstName']; ?>" /><br>
 <label for="familyName" class="label">Family Name</label>
-				<input type="text" name="familyName" class="familyName"/><br>
+				<input type="text" name="familyName" class="familyName" value="<?php if(isset($_POST['familyName'])) print $_POST['familyName']; ?>"/><br>
 <label for="age" class="label">Age</label>
-				<input type="number" min="0" max="100" name="age" class="age"/><br>
+				<input type="number" min="0" max="100" name="age" class="age" value="<?php if(isset($_POST['age'])) print $_POST['age']; ?>" /><br>
 
 <label for="sex" class="label">Sex</label>
 <select name="sex">
@@ -55,12 +55,10 @@
 		</select><br>
 
 <label for="email" class="label">Email</label>
-				<input type="text" name="email" class="email"/><br>
+				<input type="text" name="email" class="email" value="<?php if(isset($_POST['email'])) print $_POST['email']; ?>"  /><br>
 
 <label for="secondEmail" class="label">Second Email</label>
-				<input type="text" name="secondEmail" class="secondEmail" /><br>
-
-
+				<input type="text" name="secondEmail" class="secondEmail" value="<?php if(isset($_POST['secondEmail'])) print $_POST['secondEmail'];?>"  /><br>
 
 <label for="securityQ" class="label">Secret Question</label>
 <select name="securityQ">
@@ -71,24 +69,73 @@
 		</select><br>
 
 <label for="securityA" class="label">Secret Answer</label>
-				<input type="text" name="securityA" class="securityA" autocomplete="off" /><br>
+				<input type="text" name="securityA" class="securityA" autocomplete="off" value="<?php if(isset($_POST['securityA'])) print $_POST['securityA']; ?>"  /><br>
 
 <label for="password" class="label">Password</label>
-				<input type="password" name="password" class="password"/><br>
-								
-<label for="cars" class="label">Cars</label> <input type="text" name="cars" class="cars"/><br> 
+				<input type="password" name="password" class="password" value="<?php if(isset($_POST['password'])) print $_POST['password']; ?>" /><br>
+				
+				
+				
+				<label for="model" class="label">Model</label>
+				<input type="text" name="model" class="model" /><br>
+				
+<label for="trademark" class="label">Trademark</label>
+				<input type="text" name="trademark" class="trademark" /><br>
 
-<?php
+<label for="engine" class="label">Engine Size</label>
+				<input type="text" name="engineSize" class="engineSize" /><br>
+				
+<label for="production Year" class="label">Production Year</label>
+				<input type="number" min="1900" max="2030" name="productionYear" class="productionYear" /><br>
+
+<?php if(isset($_POST['Create_Worker'])) print "<input type=\"hidden\" name=\"Create Worker\" id=\"Create Worker\" value=\"Create Worker\"/>"; ?>
+	
+
+ 
+				
+				
+
+<?php include 'base.php';
+
+
+$cars=null;
+
+if(isset($_POST['Remove_Car']))
+{
+	$cars=unserialize(base64_decode($_POST['cars']));
+	if(isset($_POST['Car_ID']))
+	unset($cars[$_POST['Car_ID']]);
+	print "THE RESULT IS: ".isset($_POST['Add_Car'])==false ."<br>";
+}
+if(isset($_POST['Add_Car']))
+{
+	
+	$car=new Car($_POST['model'],$_POST['productionYear'],$_POST['trademark'],$_POST['engineSize']);
+	if(!isset($_POST['cars']))
+	$cars=array($car);
+	else{ $cars=unserialize(base64_decode($_POST['cars'])); array_push($cars,$car);}
+	
+}
+if($cars!=null){
+	foreach($cars as $key=>$value)
+	{var_dump($value); print "<input type=\"radio\" name=\"Car ID\" value=\"".$key."\"/>";}
+	print "<br><br><br><input type=\"submit\" class=\"button\" name=\"Remove Car\" id=\"Remove Car\" value=\"Remove Car\" formaction=\"Create.php\" />";
+		
+	
+	print "<input type=\"hidden\" name=\"cars\" value=\"".base64_encode(serialize($cars))."\"/>";
+}
+
 if(isset($_POST['Create_Worker'])){
  print ' 		<label for="profession" class="label">Profession</label>
-				<input type="text" name="profession" class="profession"/><br>
+				<input type="text" name="profession" class="profession"  value="'. (isset($_POST['profession']) ? $_POST['profession'] : '' ) .'"/><br>
 
 				<input type="hidden" name="Worker" value="Worker"/>
 				<label for="paymentPerHour" class="label">Payment Per Hour</label>
-				<input type="text" name="paymentPerHour" class="paymentPerHour" /><br> ';} ?>
+				<input type="text" name="paymentPerHour" class="paymentPerHour" value="'. (isset($_POST['paymentPerHour']) ? $_POST['paymentPerHour'] : '') . '"/>';} ?>
 
+				<br><br><br>
+				<input type="submit" class="button" name="Add Car" id="Add Car" value="Add Car" formaction="Create.php" />
 				<input type="file" name="Profile Picture"/>
 				<input type="submit" class="button" name="Register_Worker" id="Register" value="Register"/> </form>
 </body>
-
 </html>
