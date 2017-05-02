@@ -56,17 +56,17 @@
 				<input type=\"number\" min=\"0\" max=\"100\" name=\"age\" class=\"age\" value =\"".$user->age ."\" /><br>
 
 				<label for=\"passwordOld\" class=\"label\">Old Password</label>
-				<input type=\"password\" id=\"passwordOld\" name=\"passwordOld\" /><br>
+				<input type=\"password\" id=\"passwordOld\" name=\"passwordOld\"  value=\"". (isset($_POST['passwordOld']) ? $_POST['passwordOld'] : "")  ."\"/><br>
 
 				<label for=\"passwordNew\" class=\"label\">New Password</label>
-				<input type=\"password\" id=\"passwordNew\" name=\"passwordNew\" /><br>
+				<input type=\"password\" id=\"passwordNew\" name=\"passwordNew\"  value=\"". (isset($_POST['passwordNew']) ? $_POST['passwordNew'] : "")  ."\"/><br>
 
 				<label for=\"securityQ\" class=\"label\">Secret Question</label>". $user->securityQ."<br>
 				<label for=\"securityAOld\" class=\"label\">Old Secret Answer</label>
-				<input type=\"text\" name=\"securityAOld\" id=\"securityAOld\" autocomplete=\"off\" /><br>
+				<input type=\"text\" name=\"securityAOld\" id=\"securityAOld\" autocomplete=\"off\" value=\"". (isset($_POST['securityAOld']) ? $_POST['securityAOld'] : "")  ."\" /><br>
 
 				<label for=\"securityA\" class=\"label\">New Secret Answer</label>
-				<input type=\"text\" name=\"securityA\" id=\"securitytA\" autocomplete=\"off\"/> <br>
+				<input type=\"text\" name=\"securityA\" id=\"securitytA\" autocomplete=\"off\ value=\"". (isset($_POST['securityA']) ? $_POST['securityA'] : "")  ."\" /> <br>
 				
 								
 				<label for=\"model\" class=\"label\">Model</label>
@@ -82,27 +82,30 @@
 				<input type=\"number\" min=\"1900\" max=\"2030\" name=\"productionYear\" class=\"productionYear\" /><br>	
 				";
 
+if(!isset($_POST['cars']) && $user->cars!=null)
+$_POST['cars']=$user->cars;
+
 if(isset($_POST['Remove_Car']))
 {
 	if(isset($_POST['Car_ID'])){
-	$arr=unserialize(base64_decode($user->cars));
+	$arr=unserialize(base64_decode($_POST['cars']));
 	
 	unset($arr[$_POST['Car_ID']]);
-	$user->cars=base64_encode(serialize($arr));
+	$_POST['cars']=base64_encode(serialize($arr));
 	}
 }
+
 if(isset($_POST['Add_Car']))
 {
-	
 	$car=new Car($_POST['model'],$_POST['productionYear'],$_POST['trademark'],$_POST['engineSize']);
-	if($user->cars==null)$user->cars=base64_encode(serialize(array($car)));
+	if($_POST['cars']==null)$_POST['cars']=base64_encode(serialize(array($car)));
 	else 
-	{	$arr=unserialize(base64_decode($user->cars));
+	{	$arr=unserialize(base64_decode($_POST['cars']));
 			array_push($arr,$car);
-	$user->cars=base64_encode(serialize($arr));
+	$_POST['cars']=base64_encode(serialize($arr));
 	}
-	
 }
+
 if(isset($_POST['Worker'])) print"
 				<label for=\"paymentPerHour\" class=\"label\">Payment Per Hour</label>
 				<input type=\"text\" name=\"paymentPerHour\" id=\"paymentPerHour\" autocomplete=\"off\" value=\"".$user->paymentPerHour."\"/><br>
@@ -112,8 +115,8 @@ if(isset($_POST['Worker'])) print"
 				<label for=\"paymentPerHour\" class=\"label\">Profession</label>
 				<input type=\"text\" name=\"profession\" id=\"professsion\" autocomplete=\"off\" value=\"".$user->profession."\"/><br>";
 
-if($user->cars!=null){
-	foreach(unserialize(base64_decode($user->cars)) as $key=>$value)
+if($_POST['cars']!=null){
+	foreach(unserialize(base64_decode($_POST['cars'])) as $key=>$value)
 	{var_dump($value); print "<input type=\"radio\" name=\"Car ID\" value=\"".$key."\"/>";}
 	print "<br><br><br><input type=\"submit\" class=\"button\" name=\"Remove Car\" id=\"Remove Car\" value=\"Remove Car\" formaction=\"Edit.php\" />";
 }					
@@ -121,6 +124,7 @@ if($user->cars!=null){
 				print " <div class=\"btn-group\">
 				<input type=\"submit\" class=\"button\" name=\"Add Car\" id=\"Add Car\" value=\"Add Car\" formaction=\"Edit.php\" />
 				<input type=\"file\" id=\"Profile Picture\" name=\"Profile Picture\" />
+				<input type=\"hidden\" name=\"cars\" value=\"". (isset($_POST['cars']) ? $_POST['cars'] : null)  ."\"/>
 				<input type=\"hidden\" name=\"ID\" value=\"" .$counter. "\">
 				<input type=\"submit\" class=\"button\" name=\"Update\" id=\"Update\" value=\"Update\"/ >
 				</div>
